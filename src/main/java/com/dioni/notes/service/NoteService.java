@@ -1,4 +1,38 @@
 package com.dioni.notes.service;
 
+import com.dioni.notes.model.Note;
+import com.dioni.notes.repository.NoteRepository;
+import java.util.List;
+import java.util.UUID;
+
 public class NoteService {
+    private final NoteRepository noteRepository;
+
+    public NoteService(NoteRepository noteRepository) {
+        if (noteRepository == null) {
+            throw new IllegalArgumentException("Note repository cannot be null.");
+        }
+
+        this.noteRepository = noteRepository;
+    }
+
+    public Note createNote(String title, String content) {
+        Note note = new Note(title, content);
+
+        noteRepository.save(note);
+
+        return note;
+    }
+
+    public Note getNoteById(UUID id) {
+        return noteRepository.findById(id);
+    }
+
+    public List<Note> getAllNotes() {
+        return noteRepository.findAll();
+    }
+
+    public int countNotes() {
+        return noteRepository.count();
+    }
 }

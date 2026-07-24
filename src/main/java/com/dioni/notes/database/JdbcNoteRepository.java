@@ -1,19 +1,17 @@
 package com.dioni.notes.database;
 
 import com.dioni.notes.model.Note;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+
+import java.sql.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class JdbcNoteLookup {
+public class JdbcNoteRepository {
     private final DatabaseConnection databaseConnection;
 
-    public JdbcNoteLookup(DatabaseConnection databaseConnection) {
+    public JdbcNoteRepository(DatabaseConnection databaseConnection) {
         if (databaseConnection == null) {
             throw new IllegalArgumentException("Databace connection cannot be null.");
         }
@@ -68,6 +66,33 @@ public class JdbcNoteLookup {
                 }
 
                 return notes;
+            }
+        }
+    }
+
+    public void save(Note note) throws SQLException {
+        if (note == null) {
+            throw new IllegalArgumentException("Note cannot be null.");
+        }
+
+        String sql = "INSERT INTO notes" +
+                "(id, title, content, created_at, updated_at, archived)" +
+                "VALUES (?, ?, ?, ?, ?, ?)";
+
+        try (Connection connection = databaseConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql)
+        ) {
+            statement.setObject(1, note.getId());
+            statement.setString(2, note.getTitle());
+            statement.setString(3, note.getContent());
+            statement.setTimestamp(4, Timestamp.valueOf(note.getCreationTime()));
+            statement.setTimestamp(5, Timestamp.valueOf(note.getUpdateTime()));
+            statement.setBoolean(6, note.isArchived());
+
+            int affectedRows = statement.executeUpdate();
+
+            if (affectedRows != 1) {
+                throw new SQLException("Expected 1 inserted row, but affected: " + affectedRows);
             }
         }
     }

@@ -1,9 +1,11 @@
 package com.dioni.notes.database;
 
+import com.dioni.notes.model.Note;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class JdbcNoteLookup {
@@ -17,19 +19,32 @@ public class JdbcNoteLookup {
         this.databaseConnection = databaseConnection;
     }
 
-    public String findTitleById(UUID id) throws SQLException {
+    private Note mapRowToNote(ResultSet resultSet) throws SQLException {
+        UUID id = resultSet.getObject("id", UUID.class);
+        String title = resultSet.getString("title");
+        String content = resultSet.getString("content");
+        LocalDateTime createdAt = resultSet.getTimestamp("created_at").toLocalDateTime();
+        LocalDateTime updatedAt = resultSet.getTimestamp("updated_at").toLocalDateTime();
+        boolean archived = resultSet.getBoolean("archived");
+
+        Note note = new Note(id, title, content, createdAt, updatedAt, archived);
+
+        return note;
+    }
+
+    public Note findById(UUID id) throws SQLException {
         if (id == null) {
             throw new IllegalArgumentException("Note ID cannot be null");
         }
 
-        String sql = "SELECT title FROM notes WHERE id = ?";
+        String sql = "SELECT id, title, content, created_at, updated_at, archived FROM notes WHERE id = ?";
 
         try (Connection connection = databaseConnection.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setObject(1, id);
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    return resultSet.getString("title");
+                    return mapRowToNote(resultSet);
                 }
 
                 throw new IllegalArgumentException("Note ID not found.\nID: " + id);

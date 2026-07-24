@@ -9,6 +9,7 @@ public class Note {
     private String content;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private boolean archived;
 
     public Note(
             String title,
@@ -31,6 +32,23 @@ public class Note {
         this.content = content;
         this.createdAt = now;
         this.updatedAt = now;
+        this.archived = false;
+    }
+
+    public Note(
+            UUID id,
+            String title,
+            String content,
+            LocalDateTime createdAt,
+            LocalDateTime updatedAt,
+            boolean archived
+    ) {
+        this.id = id;
+        this.title = title;
+        this.content = content;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.archived = archived;
     }
 
     public void printNoteInfo() {
@@ -55,5 +73,9 @@ public class Note {
 
     public LocalDateTime getUpdateTime() {
         return updatedAt;
+    }
+
+    public boolean isArchived() {
+        return archived;
     }
 }

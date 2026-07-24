@@ -6,6 +6,8 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class JdbcNoteLookup {
@@ -48,6 +50,24 @@ public class JdbcNoteLookup {
                 }
 
                 throw new IllegalArgumentException("Note ID not found.\nID: " + id);
+            }
+        }
+    }
+
+    public List<Note> findAll() throws SQLException {
+        String sql = "SELECT id, title, content, created_at, updated_at, archived FROM notes ORDER BY updated_at DESC";
+
+        try (Connection connection = databaseConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql)) {
+            try(ResultSet resultSet = statement.executeQuery()) {
+                List<Note> notes = new ArrayList<>();
+
+                while (resultSet.next()) {
+                    Note note = mapRowToNote(resultSet);
+                    notes.add(note);
+                }
+
+                return notes;
             }
         }
     }

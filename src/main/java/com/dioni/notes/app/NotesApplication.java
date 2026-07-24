@@ -5,6 +5,8 @@ import com.dioni.notes.database.JdbcNoteLookup;
 import com.dioni.notes.model.Note;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class NotesApplication {
@@ -24,6 +26,21 @@ public class NotesApplication {
             System.out.println("Note archived status: " + note.isArchived());
         } catch (SQLException | IllegalArgumentException exception) {
             System.err.println("Could not retrieve note: " + exception.getMessage());
+        }
+
+        try {
+            List<Note> notes = jdbcNoteLookup.findAll();
+
+            for (Note note : notes) {
+                System.out.println(note.getTitle());
+                System.out.println(note.getUpdateTime());
+                System.out.println(note.isArchived());
+                System.out.println("----------------------------------------");
+            }
+
+            System.out.println("Total number of notes found: " + notes.size());
+        } catch (SQLException | IllegalArgumentException exception) {
+            System.err.println("Count not retrieve notes: " + exception.getMessage());
         }
     }
 }

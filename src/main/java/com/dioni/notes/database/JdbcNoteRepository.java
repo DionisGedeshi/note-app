@@ -118,4 +118,22 @@ public class JdbcNoteRepository {
             }
         }
     }
+
+    public void deleteById(UUID id) throws SQLException {
+        if (id == null) {
+            throw new IllegalArgumentException("ID cannot be null.");
+        }
+        String sql = "DELETE FROM notes WHERE id = ?";
+
+        try (Connection connection = databaseConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setObject(1, id);
+
+            int affectedRows = statement.executeUpdate();
+
+            if (affectedRows != 1) {
+                throw new SQLException("Expected 1 deleted row, but affected: " + affectedRows);
+            }
+        }
+    }
 }

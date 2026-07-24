@@ -1,5 +1,6 @@
 package com.dioni.notes.model;
 
+import java.sql.SQLException;
 import java.util.UUID;
 import java.time.LocalDateTime;
 

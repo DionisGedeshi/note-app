@@ -78,4 +78,18 @@ public class Note {
     public boolean isArchived() {
         return archived;
     }
+
+    public void updateNote(String newTitle, String newContent) {
+        if (newTitle == null || newTitle.isBlank()) {
+            throw new IllegalArgumentException("Title cannot be null or blank.");
+        }
+
+        if (newContent == null) {
+            newContent = "";
+        }
+
+        this.title = newTitle;
+        this.content = newContent;
+        this.updatedAt = LocalDateTime.now();
+    }
 }

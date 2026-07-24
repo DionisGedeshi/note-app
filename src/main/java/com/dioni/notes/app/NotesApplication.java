@@ -13,35 +13,41 @@ public class NotesApplication {
         DatabaseConnection connection = new DatabaseConnection();
         JdbcNoteRepository jdbcNoteRepository = new JdbcNoteRepository(connection);
 
-        Note newNote = new Note("Random note title.", "Random note content");
+        /*
+        Retrieve an existing note --Done
+        Print its original values --Done
+        Edit its title and content --Done
+        Call repository.update(note) --Done
+        Retrieve it again --Done
+        Print the new values --Done
+         */
+
+        UUID noteId = UUID.fromString("550e8400-e29b-41d4-a716-446655440001");
 
         try {
-            jdbcNoteRepository.save(newNote);
+            Note note = jdbcNoteRepository.findById(noteId);
 
-            UUID newNoteId = newNote.getId();
+            System.out.println("Note with ID \"" + note.getId() + "\" before update:");
+            System.out.println("Title: " + note.getTitle());
+            System.out.println("Content: " + note.getContent());
+            System.out.println("Created at: " + note.getCreationTime());
+            System.out.println("Updated at: " + note.getUpdateTime());
+            System.out.println("Archived: " + note.isArchived());
+            System.out.println();
 
-            Note retrievedNote = jdbcNoteRepository.findById(newNoteId);
-            System.out.println("ID of the new note: " + retrievedNote.getId());
-            System.out.println("Title: " + retrievedNote.getTitle());
-            System.out.println("Content: " + retrievedNote.getContent());
-        } catch (SQLException exception) {
-            System.err.println("Could not save note: " + exception.getMessage());
-        }
+            note.updateNote("This is a new title", "This is the new content");
+            jdbcNoteRepository.update(note);
 
-        try {
-            List<Note> notes = jdbcNoteRepository.findAll();
+            Note updatedNote = jdbcNoteRepository.findById(noteId);
 
-            for (Note note : notes) {
-                System.out.println("----------------------------------------");
-                System.out.println(note.getTitle());
-                System.out.println(note.getUpdateTime());
-                System.out.println(note.isArchived());
-                System.out.println();
-            }
-
-            System.out.println("Total number of notes found: " + notes.size());
+            System.out.println("Note with ID \"" + updatedNote.getId() + "\" after update: ");
+            System.out.println("Title: " + updatedNote.getTitle());
+            System.out.println("Content: " + updatedNote.getContent());
+            System.out.println("Created at: " + updatedNote.getCreationTime());
+            System.out.println("Updated at: " + updatedNote.getUpdateTime());
+            System.out.println("Archived: " + updatedNote.isArchived());
         } catch (SQLException | IllegalArgumentException exception) {
-            System.err.println("Count not retrieve notes: " + exception.getMessage());
+            System.err.println("Could not retrieve note: " + exception.getMessage());
         }
     }
 }

@@ -96,4 +96,26 @@ public class JdbcNoteRepository {
             }
         }
     }
+
+    public void update(Note note) throws SQLException {
+        if (note == null) {
+            throw new IllegalArgumentException("Note cannot be null.");
+        }
+
+        String sql = "UPDATE notes SET title = ?, content = ?, updated_at = ? WHERE id = ?";
+
+        try (Connection connection = databaseConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql)) {
+            statement.setString(1, note.getTitle());
+            statement.setString(2, note.getContent());
+            statement.setTimestamp(3, Timestamp.valueOf(note.getUpdateTime()));
+            statement.setObject(4, note.getId());
+
+            int affectedRows = statement.executeUpdate();
+
+            if (affectedRows != 1) {
+                throw new SQLException("Expected 1 updated row, but affected: " + affectedRows);
+            }
+        }
+    }
 }

@@ -1,6 +1,8 @@
 package com.dioni.notes.database;
 
+import com.dioni.notes.exception.RepositoryException;
 import com.dioni.notes.model.Note;
+import com.dioni.notes.repository.NoteRepository;
 
 import java.sql.*;
 import java.time.LocalDateTime;
@@ -8,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class JdbcNoteRepository {
+public class JdbcNoteRepository implements NoteRepository {
     private final DatabaseConnection databaseConnection;
 
     public JdbcNoteRepository(DatabaseConnection databaseConnection) {
@@ -32,7 +34,8 @@ public class JdbcNoteRepository {
         return note;
     }
 
-    public Note findById(UUID id) throws SQLException {
+    @Override
+    public Note findById(UUID id) {
         if (id == null) {
             throw new IllegalArgumentException("Note ID cannot be null");
         }
@@ -49,10 +52,13 @@ public class JdbcNoteRepository {
 
                 throw new IllegalArgumentException("Note ID not found.\nID: " + id);
             }
+        } catch (SQLException exception) {
+            throw new RepositoryException("Could not find note with ID: " + id, exception);
         }
     }
 
-    public List<Note> findAll() throws SQLException {
+    @Override
+    public List<Note> findAll() {
         String sql = "SELECT id, title, content, created_at, updated_at, archived FROM notes ORDER BY updated_at DESC";
 
         try (Connection connection = databaseConnection.getConnection();
@@ -67,10 +73,13 @@ public class JdbcNoteRepository {
 
                 return notes;
             }
+        } catch (SQLException exception) {
+            throw new RepositoryException("Could not find all notes: ", exception);
         }
     }
 
-    public void save(Note note) throws SQLException {
+    @Override
+    public void save(Note note) {
         if (note == null) {
             throw new IllegalArgumentException("Note cannot be null.");
         }
@@ -94,10 +103,13 @@ public class JdbcNoteRepository {
             if (affectedRows != 1) {
                 throw new SQLException("Expected 1 inserted row, but affected: " + affectedRows);
             }
+        } catch (SQLException exception) {
+            throw new RepositoryException("Could not save note with ID: " + note.getId(), exception);
         }
     }
 
-    public void update(Note note) throws SQLException {
+    @Override
+    public void update(Note note) {
         if (note == null) {
             throw new IllegalArgumentException("Note cannot be null.");
         }
@@ -116,17 +128,20 @@ public class JdbcNoteRepository {
             if (affectedRows != 1) {
                 throw new SQLException("Expected 1 updated row, but affected: " + affectedRows);
             }
+        } catch (SQLException exception) {
+            throw new RepositoryException("Could not update note with ID: " + note.getId(), exception);
         }
     }
 
-    public void deleteById(UUID id) throws SQLException {
+    @Override
+    public void deleteById(UUID id) {
         if (id == null) {
             throw new IllegalArgumentException("ID cannot be null.");
         }
         String sql = "DELETE FROM notes WHERE id = ?";
 
         try (Connection connection = databaseConnection.getConnection();
-            PreparedStatement statement = connection.prepareStatement(sql)) {
+             PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setObject(1, id);
 
             int affectedRows = statement.executeUpdate();
@@ -134,6 +149,26 @@ public class JdbcNoteRepository {
             if (affectedRows != 1) {
                 throw new SQLException("Expected 1 deleted row, but affected: " + affectedRows);
             }
+        } catch (SQLException exception) {
+            throw new RepositoryException("Could not delete note with ID: " + id, exception);
+        }
+    }
+
+    @Override
+    public int count() {
+        String sql = "SELECT COUNT(*) AS count_notes FROM notes";
+
+        try (Connection connection = databaseConnection.getConnection();
+            PreparedStatement statement = connection.prepareStatement(sql)) {
+            try (ResultSet resultSet = statement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getInt("count_notes");
+                }
+
+                throw new RepositoryException("Database returned no result when counting notes.");
+            }
+        } catch (SQLException exception) {
+            throw new RepositoryException("Could not count notes: ", exception);
         }
     }
 }

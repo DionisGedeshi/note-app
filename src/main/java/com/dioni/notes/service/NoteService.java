@@ -32,6 +32,19 @@ public class NoteService {
         return noteRepository.findAll();
     }
 
+    public Note updateNote(UUID id, String newTitle, String newContent) {
+        Note note = noteRepository.findById(id);
+
+        note.updateNote(newTitle, newContent);
+        noteRepository.update(note);
+
+        return note;
+    }
+
+    public void deleteNote(UUID id) {
+        noteRepository.deleteById(id);
+    }
+
     public int countNotes() {
         return noteRepository.count();
     }

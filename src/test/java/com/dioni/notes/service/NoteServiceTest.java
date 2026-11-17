@@ -142,4 +142,36 @@ class NoteServiceTest {
 
         assertTrue(containsThirdNote);
     }
+
+    @Test
+    void handlesNullContentAndArchivingLifecycle() {
+        Note note = service.createNote("Archive Me", null);
+        assertEquals("", note.getContent());
+        assertFalse(note.isArchived());
+        assertEquals(1, service.getActiveNotes().size());
+        assertEquals(0, service.getArchivedNotes().size());
+
+        Note archived = service.archiveNote(note.getId());
+        assertTrue(archived.isArchived());
+        assertEquals(0, service.getActiveNotes().size());
+        assertEquals(1, service.getArchivedNotes().size());
+
+        Note unarchived = service.unarchiveNote(note.getId());
+        assertFalse(unarchived.isArchived());
+        assertEquals(1, service.getActiveNotes().size());
+    }
+
+    @Test
+    void searchesNotesCaseInsensitively() {
+        service.createNote("Java Concurrency", "Virtual threads in JDK 21");
+        service.createNote("Arch Linux Setup", "Hyprland and HyDE config");
+
+        List<Note> javaMatches = service.searchNotes("java");
+        assertEquals(1, javaMatches.size());
+        assertEquals("Java Concurrency", javaMatches.getFirst().getTitle());
+
+        List<Note> contentMatches = service.searchNotes("hyprland");
+        assertEquals(1, contentMatches.size());
+        assertEquals("Arch Linux Setup", contentMatches.getFirst().getTitle());
+    }
 }

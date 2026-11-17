@@ -1,14 +1,7 @@
-### Maven ###
 target/
-
-### IntelliJ IDEA ###
 .idea/
 *.iml
-out/
-!**/src/main/**/out/
-!**/src/test/**/out/
-.kotlin
-
-### Local config and sensitive data ###
-.env
 *.log
+.env
+codebase.txt
+note-app.zip

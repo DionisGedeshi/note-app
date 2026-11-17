@@ -1,39 +1,30 @@
 package com.dioni.notes.model;
 
-import java.sql.SQLException;
-import java.util.UUID;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public class Note {
-    private UUID id;
+    private final UUID id;
     private String title;
     private String content;
-    private LocalDateTime createdAt;
+    private final LocalDateTime createdAt;
     private LocalDateTime updatedAt;
     private boolean archived;
 
-    public Note(
-            String title,
-            String content
-    ) {
+    public Note(String title, String content) {
         if (title == null || title.isBlank()) {
             throw new IllegalArgumentException("Title cannot be null or blank.");
-        }
-
-        if (content == null) {
-            this.content = "";
-        } else {
-            this.content = content;
         }
 
         LocalDateTime now = LocalDateTime.now();
 
         this.id = UUID.randomUUID();
         this.title = title;
-        this.content = content;
+        this.content = (content == null) ? "" : content;
         this.createdAt = now;
         this.updatedAt = now;
         this.archived = false;
+
     }
 
     public Note(
@@ -46,14 +37,10 @@ public class Note {
     ) {
         this.id = id;
         this.title = title;
-        this.content = content;
+        this.content = (content == null) ? "" : content;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.archived = archived;
-    }
-
-    public void printNoteInfo() {
-        System.out.println(id + title + content + createdAt + updatedAt);
     }
 
     public UUID getId() {
@@ -85,12 +72,18 @@ public class Note {
             throw new IllegalArgumentException("Title cannot be null or blank.");
         }
 
-        if (newContent == null) {
-            newContent = "";
-        }
-
         this.title = newTitle;
-        this.content = newContent;
+        this.content = (newContent == null) ? "" : newContent;
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    public void archive() {
+        this.archived = true;
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    public void unarchive() {
+        this.archived = false;
         this.updatedAt = LocalDateTime.now();
     }
 }

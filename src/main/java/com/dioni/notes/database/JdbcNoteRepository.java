@@ -41,7 +41,7 @@ public class JdbcNoteRepository implements NoteRepository {
         try (Connection connection = databaseConnection.getConnection(); Statement statement = connection.createStatement()) {
             statement.execute(sql);
         } catch (SQLException exception) {
-            throw new RepositoryException("Could not initialize database schema.", exception);
+            throw new RepositoryException("Could not initialize database schema." + exception);
         }
     }
 
@@ -147,7 +147,7 @@ public class JdbcNoteRepository implements NoteRepository {
                 return notes;
             }
         } catch (SQLException exception) {
-            throw new RepositoryException("Count not search notes with keyword: " + keyword, exception);
+            throw new RepositoryException("Could not search notes with keyword: " + keyword, exception);
         }
     }
 
@@ -175,7 +175,7 @@ public class JdbcNoteRepository implements NoteRepository {
                 throw new SQLException("Expected 1 inserted row, but affected: " + affectedRows);
             }
         } catch (SQLException exception) {
-            throw new RepositoryException("Count not save note with ID: " + note.getId(), exception);
+            throw new RepositoryException("Could not save note with ID: " + note.getId(), exception);
         }
     }
 
@@ -185,7 +185,7 @@ public class JdbcNoteRepository implements NoteRepository {
             throw new IllegalArgumentException("Note cannot be null.");
         }
 
-        String sql = "UPDATE notes SET title = ?, content = ?, updated_at = ?, archived = ?, WHERE id = ?";
+        String sql = "UPDATE notes SET title = ?, content = ?, updated_at = ?, archived = ? WHERE id = ?";
 
         try (Connection connection = databaseConnection.getConnection(); PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, note.getTitle());
@@ -199,7 +199,7 @@ public class JdbcNoteRepository implements NoteRepository {
                 throw new SQLException("Expected 1 updated row, bt affected: " + affectedRows);
             }
         } catch (SQLException exception) {
-            throw new RepositoryException("Count not update note with ID: " + note.getId(), exception);
+            throw new RepositoryException("Could not update note with ID: " + note.getId(), exception);
         }
     }
 

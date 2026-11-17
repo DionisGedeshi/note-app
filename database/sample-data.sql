@@ -1,18 +1,18 @@
 INSERT INTO notes(
-                  id,
-                  title,
-                  content,
-                  created_at,
-                  updated_at,
-                  archived
+    id,
+    title,
+    content,
+    created_at,
+    updated_at,
+    archived
 )
 VALUES (
            '550e8400-e29b-41d4-a716-446655440001',
-        'SQL Test',
-        'Agreesive ahh language',
-        '2026-07-21 21:47:10',
-        '2026-07-21 21:47:10',
-        FALSE
+           'SQL Test',
+           'Architecture review'
+               '2026-07-21 21:47:10',
+           '2026-07-21 21:47:10',
+           FALSE
        );
 
 INSERT INTO notes(
@@ -25,28 +25,28 @@ INSERT INTO notes(
 )
 VALUES (
            '550e8400-e29b-41d4-a716-446655440002',
-        'SQL',
-        'Learning the language',
-        '2026-07-21 21:49:10',
-        '2026-07-21 21:49:10',
-        TRUE
+           'SQL',
+           'Learning the language',
+           '2026-07-21 21:49:10',
+           '2026-07-21 21:49:10',
+           TRUE
        );
 
 INSERT INTO notes(
-                  id,
-                  title,
-                  content,
-                  created_at,
-                  updated_at,
-                  archived
+    id,
+    title,
+    content,
+    created_at,
+    updated_at,
+    archived
 )
 VALUES (
            '550e8400-e29b-41d4-a716-446655440003',
-        'Hi mom',
-        'Hello World',
-        '2026-07-21 21:51:10',
-        '2026-07-21 21:51:10',
-        FALSE
+           'Hello',
+           'Hello World',
+           '2026-07-21 21:51:10',
+           '2026-07-21 21:51:10',
+           FALSE
        );
 
 SELECT *

@@ -43,7 +43,7 @@ public class NotesApplication {
                         default -> System.out.println("Invalid option. Choose 0-8.");
                     }
                 } catch (RuntimeException ex) {
-                    System.out.println("Error: " + ex.getMessage());
+                    System.out.println("Error: " + ex.getMessage() + " -> " + ex.getCause());
                 }
             }
         }

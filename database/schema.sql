@@ -1,4 +1,4 @@
-CREATE TABLE notes (
+CREATE TABLE IF NOT EXISTS notes (
     id UUID PRIMARY KEY,
     title VARCHAR(200) NOT NULL,
     content TEXT NOT NULL DEFAULT '',
